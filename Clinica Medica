@@ -1,0 +1,62 @@
+-- ==============================
+-- BANCO DE DADOS: ClinicaMedica
+-- ==============================
+Create  database Clinica_Cristal;
+-- Tabela de Convênios
+CREATE TABLE Convenios (
+    convenio_id INT IDENTITY(1,1) PRIMARY KEY,
+    nome NVARCHAR(100) NOT NULL,
+    cobertura NVARCHAR(200),
+    contato NVARCHAR(100)
+);
+
+-- Tabela de Pacientes
+CREATE TABLE Pacientes (
+    paciente_id INT IDENTITY(1,1) PRIMARY KEY,
+    nome NVARCHAR(100) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    sexo CHAR(1),
+    telefone NVARCHAR(20),
+    email NVARCHAR(100),
+    endereco NVARCHAR(200),
+    convenio_id INT NULL,
+    CONSTRAINT FK_Pacientes_Convenios FOREIGN KEY (convenio_id) REFERENCES Convenios(convenio_id)
+);
+
+-- Tabela de Médicos
+CREATE TABLE Medicos (
+    medico_id INT IDENTITY(1,1) PRIMARY KEY,
+    nome NVARCHAR(100) NOT NULL,
+    especialidade NVARCHAR(100),
+    CRM NVARCHAR(20) UNIQUE,
+    telefone NVARCHAR(20),
+    email NVARCHAR(100)
+);
+
+-- Tabela de Consultas
+CREATE TABLE Consultas (
+    consulta_id INT IDENTITY(1,1) PRIMARY KEY,
+    paciente_id INT NOT NULL,
+    medico_id INT NOT NULL,
+    data_consulta DATE NOT NULL,
+    hora_consulta TIME NOT NULL,
+    motivo NVARCHAR(200),
+    diagnostico NVARCHAR(MAX),
+    receita NVARCHAR(MAX),
+    CONSTRAINT FK_Consultas_Pacientes FOREIGN KEY (paciente_id) REFERENCES Pacientes(paciente_id),
+    CONSTRAINT FK_Consultas_Medicos FOREIGN KEY (medico_id) REFERENCES Medicos(medico_id)
+);
+
+-- Tabela de Exames
+CREATE TABLE Exames (
+    exame_id INT IDENTITY(1,1) PRIMARY KEY,
+    paciente_id INT NOT NULL,
+    consulta_id INT NOT NULL,
+    medico_id INT NOT NULL,
+    tipo_exame NVARCHAR(100),
+    data_exame DATE,
+    resultado NVARCHAR(MAX),
+    CONSTRAINT FK_Exames_Pacientes FOREIGN KEY (paciente_id) REFERENCES Pacientes(paciente_id),
+    CONSTRAINT FK_Exames_Consultas FOREIGN KEY (consulta_id) REFERENCES Consultas(consulta_id),
+    CONSTRAINT FK_Exames_Medicos FOREIGN KEY (medico_id) REFERENCES Medicos(medico_id)
+);
